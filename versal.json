@@ -1,45 +1,11 @@
 {
-  "name": "LMS with Plagiarism Detection",
-  "version": "1.0.0",
-  "configurations": {
-    "frontend": {
-      "path": "./lms_frontend",
-      "command": "npm start",
-      "port": 3000,
-      "env": {
-        "REACT_APP_API_URL": "http://localhost:8000/api"
-      }
-    },
-    "backend": {
-      "path": "./lms_backend",
-      "command": "python manage.py runserver 0.0.0.0:8000",
-      "port": 8000,
-      "env": {
-        "DEBUG": "True",
-        "SECRET_KEY": "django-insecure-^wk8j2p13&het^x@cyd9@qy@wxe07r5pxw30xi0_g!^cye!2ev",
-        "ALLOWED_HOSTS": "localhost,127.0.0.1",
-        "DATABASE_ENGINE": "django.db.backends.sqlite3",
-        "DATABASE_NAME": "db.sqlite3"
-      }
-    }
-  },
-  "setup": {
-    "frontend": [
-      "cd lms_frontend",
-      "npm install"
-    ],
-    "backend": [
-      "cd lms_backend",
-      "pip install -r requirements.txt",
-      "python manage.py migrate",
-      "python manage.py createsuperuser"
-    ]
-  },
-  "media_directories": [
-    "./lms_backend/media/course_imgs",
-    "./lms_backend/media/profile_imgs",
-    "./lms_backend/media/course_assignment",
-    "./lms_backend/media/similarity_reports/web_reports",
-    "./lms_backend/media/student_submissions"
+  "version": 2,
+  "builds": [
+    { "src": "api/*.py", "use": "@vercel/python" },
+    { "src": "package.json", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "api/$1" },
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
