@@ -1,47 +1,45 @@
 {
   "name": "LMS with Plagiarism Detection",
   "version": "1.0.0",
-  "services": {
+  "configurations": {
     "frontend": {
-      "build": {
-        "context": "./lms_frontend",
-        "dockerfile": "Dockerfile.frontend"
-      },
-      "ports": ["3000:3000"],
-      "volumes": ["./lms_frontend:/app"],
-      "environment": {
-        "NODE_ENV": "development",
+      "path": "./lms_frontend",
+      "command": "npm start",
+      "port": 3000,
+      "env": {
         "REACT_APP_API_URL": "http://localhost:8000/api"
-      },
-      "depends_on": ["backend"]
+      }
     },
     "backend": {
-      "build": {
-        "context": "./lms_backend",
-        "dockerfile": "Dockerfile.backend"
-      },
-      "ports": ["8000:8000"],
-      "volumes": ["./lms_backend:/app", "./media:/app/media"],
-      "environment": {
+      "path": "./lms_backend",
+      "command": "python manage.py runserver 0.0.0.0:8000",
+      "port": 8000,
+      "env": {
         "DEBUG": "True",
-        "SECRET_KEY": "your-secret-key-here",
+        "SECRET_KEY": "django-insecure-^wk8j2p13&het^x@cyd9@qy@wxe07r5pxw30xi0_g!^cye!2ev",
         "ALLOWED_HOSTS": "localhost,127.0.0.1",
-        "DATABASE_URL": "postgres://postgres:postgres@db:5432/lms_db"
-      },
-      "depends_on": ["db"]
-    },
-    "db": {
-      "image": "postgres:13",
-      "volumes": ["postgres_data:/var/lib/postgresql/data"],
-      "environment": {
-        "POSTGRES_USER": "postgres",
-        "POSTGRES_PASSWORD": "postgres",
-        "POSTGRES_DB": "lms_db"
-      },
-      "ports": ["5432:5432"]
+        "DATABASE_ENGINE": "django.db.backends.sqlite3",
+        "DATABASE_NAME": "db.sqlite3"
+      }
     }
   },
-  "volumes": {
-    "postgres_data": {}
-  }
+  "setup": {
+    "frontend": [
+      "cd lms_frontend",
+      "npm install"
+    ],
+    "backend": [
+      "cd lms_backend",
+      "pip install -r requirements.txt",
+      "python manage.py migrate",
+      "python manage.py createsuperuser"
+    ]
+  },
+  "media_directories": [
+    "./lms_backend/media/course_imgs",
+    "./lms_backend/media/profile_imgs",
+    "./lms_backend/media/course_assignment",
+    "./lms_backend/media/similarity_reports/web_reports",
+    "./lms_backend/media/student_submissions"
+  ]
 }
